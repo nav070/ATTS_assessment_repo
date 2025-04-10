@@ -254,59 +254,63 @@ class _AddProductState extends State<AddProduct> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 40),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(labelText: 'Product Name'),
-                        validator: (value) => value!.isEmpty ? 'Required' : null,
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: const InputDecoration(labelText: 'Product Name'),
+                            validator: (value) => value!.isEmpty ? 'Required' : null,
+                          ),
+                          const SizedBox(height: 5),
+                          TextFormField(
+                            controller: _priceController,
+                            decoration: const InputDecoration(labelText: 'Price'),
+                            keyboardType: TextInputType.number,
+                            validator: (value) => value!.isEmpty ? 'Required' : null,
+                          ),
+                          const SizedBox(height: 10),
+                          DropdownButtonFormField<String>(
+                            value: _selectedCategory,
+                            items: _categories
+                                .map((cat) => DropdownMenuItem(
+                                      value: cat,
+                                      child: Text(cat),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() => _selectedCategory = value!);
+                            },
+                            decoration: const InputDecoration(labelText: 'Category'),
+                          ),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _discountController,
+                            decoration: const InputDecoration(labelText: 'Discount (%)'),
+                            keyboardType: TextInputType.number,
+                            validator: (value) => value!.isEmpty ? 'Required' : null,
+                          ),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _taxController,
+                            decoration: const InputDecoration(labelText: 'Tax (%)'),
+                            keyboardType: TextInputType.number,
+                            validator: (value) => value!.isEmpty ? 'Required' : null,
+                          ),
+                          const SizedBox(height: 20),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: _saveProduct,
+                              child: Text(widget.type == 1 ? 'Add Product' : 'Update Product'),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 5),
-                      TextFormField(
-                        controller: _priceController,
-                        decoration: const InputDecoration(labelText: 'Price'),
-                        keyboardType: TextInputType.number,
-                        validator: (value) => value!.isEmpty ? 'Required' : null,
-                      ),
-                      const SizedBox(height: 10),
-                      DropdownButtonFormField<String>(
-                        value: _selectedCategory,
-                        items: _categories
-                            .map((cat) => DropdownMenuItem(
-                                  value: cat,
-                                  child: Text(cat),
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() => _selectedCategory = value!);
-                        },
-                        decoration: const InputDecoration(labelText: 'Category'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: _discountController,
-                        decoration: const InputDecoration(labelText: 'Discount (%)'),
-                        keyboardType: TextInputType.number,
-                        validator: (value) => value!.isEmpty ? 'Required' : null,
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: _taxController,
-                        decoration: const InputDecoration(labelText: 'Tax (%)'),
-                        keyboardType: TextInputType.number,
-                        validator: (value) => value!.isEmpty ? 'Required' : null,
-                      ),
-                      const SizedBox(height: 20),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: _saveProduct,
-                          child: Text(widget.type == 1 ? 'Add Product' : 'Update Product'),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
