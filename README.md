@@ -1,4 +1,4 @@
-💎 CRUD_OPERATION
+# 💎 CRUD_OPERATION
 
 # A Flutter app to manage with complete CRUD operations (Create, Read, Update, Delete). Built using Provider for state management and Material Design UI.
 
