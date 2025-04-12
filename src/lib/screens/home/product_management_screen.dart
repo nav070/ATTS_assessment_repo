@@ -24,7 +24,6 @@
 //   String _selectedCategory = 'Ring';
 //   int? _editingIndex;
 
-
 //   void _saveProduct() {
 //     if (_formKey.currentState!.validate()) {
 //       final product = Product(
@@ -172,15 +171,15 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:src/models/product.dart';
 import 'package:src/provider/product_provider.dart';
 import 'package:src/widgets/app_button.dart';
 
 class AddProduct extends StatefulWidget {
-  final int type; 
+  final int type;
   final int? index;
   final List<Product>? data;
 
@@ -225,7 +224,8 @@ class _AddProductState extends State<AddProduct> {
       );
 
       if (widget.type == 1) {
-        Provider.of<ProductProvider>(context, listen: false).addProduct(product);
+        Provider.of<ProductProvider>(context, listen: false)
+            .addProduct(product);
       } else if (widget.type == 2 && widget.index != null) {
         Provider.of<ProductProvider>(context, listen: false)
             .updateProduct(widget.index!, product);
@@ -238,7 +238,7 @@ class _AddProductState extends State<AddProduct> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 500,
+      height: 430,
       width: 350,
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -246,7 +246,8 @@ class _AddProductState extends State<AddProduct> {
           children: [
             Align(
               alignment: Alignment.topRight,
-              child: AppButton().buildIconButton("close", Icons.close, onPressed: () {
+              child: AppButton().buildIconButton("close", Icons.close,
+                  onPressed: () {
                 Navigator.pop(context);
               }),
             ),
@@ -255,60 +256,110 @@ class _AddProductState extends State<AddProduct> {
               children: [
                 const SizedBox(height: 40),
                 Expanded(
-                  child: SingleChildScrollView(
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextFormField(
-                            controller: _nameController,
-                            decoration: const InputDecoration(labelText: 'Product Name'),
-                            validator: (value) => value!.isEmpty ? 'Required' : null,
-                          ),
-                          const SizedBox(height: 5),
-                          TextFormField(
-                            controller: _priceController,
-                            decoration: const InputDecoration(labelText: 'Price'),
-                            keyboardType: TextInputType.number,
-                            validator: (value) => value!.isEmpty ? 'Required' : null,
-                          ),
-                          const SizedBox(height: 10),
-                          DropdownButtonFormField<String>(
-                            value: _selectedCategory,
-                            items: _categories
-                                .map((cat) => DropdownMenuItem(
-                                      value: cat,
-                                      child: Text(cat),
-                                    ))
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() => _selectedCategory = value!);
-                            },
-                            decoration: const InputDecoration(labelText: 'Category'),
-                          ),
-                          const SizedBox(height: 10),
-                          TextFormField(
-                            controller: _discountController,
-                            decoration: const InputDecoration(labelText: 'Discount (%)'),
-                            keyboardType: TextInputType.number,
-                            validator: (value) => value!.isEmpty ? 'Required' : null,
-                          ),
-                          const SizedBox(height: 10),
-                          TextFormField(
-                            controller: _taxController,
-                            decoration: const InputDecoration(labelText: 'Tax (%)'),
-                            keyboardType: TextInputType.number,
-                            validator: (value) => value!.isEmpty ? 'Required' : null,
-                          ),
-                          const SizedBox(height: 20),
-                          Center(
-                            child: ElevatedButton(
-                              onPressed: _saveProduct,
-                              child: Text(widget.type == 1 ? 'Add Product' : 'Update Product'),
+                  child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(context)
+                        .copyWith(scrollbars: false),
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextFormField(
+                              controller: _nameController,
+                              decoration: inputDecoration.copyWith(
+                                  labelText: 'Product Name'),
+                              validator: (value) =>
+                                  value!.isEmpty ? 'Required' : null,
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: _priceController,
+                              decoration:
+                                  inputDecoration.copyWith(labelText: 'Price'),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
+                              validator: (value) {
+                                if (value == null || value.isEmpty)
+                                  return 'Required';
+                                final price = double.tryParse(value);
+                                if (price == null)
+                                  return 'Enter a valid number';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            DropdownButtonFormField<String>(
+                              value: _selectedCategory,
+                              items: _categories
+                                  .map((cat) => DropdownMenuItem(
+                                        value: cat,
+                                        child: Text(cat),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                setState(() => _selectedCategory = value!);
+                              },
+                              decoration: inputDecoration.copyWith(
+                                  labelText: 'Category'),
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: _discountController,
+                              decoration: inputDecoration.copyWith(
+                                  labelText: 'Discount (%)'),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
+                              validator: (value) {
+                                if (value == null || value.isEmpty)
+                                  return 'Required';
+                                final discount = double.tryParse(value);
+                                if (discount == null)
+                                  return 'Enter a valid number';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: _taxController,
+                              decoration: inputDecoration.copyWith(
+                                  labelText: 'Tax (%)'),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
+                              validator: (value) {
+                                if (value == null || value.isEmpty)
+                                  return 'Required';
+                                final tax = double.tryParse(value);
+                                if (tax == null) return 'Enter a valid number';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            Center(
+                              child: AppButton().buttons(
+                                widget.type == 1
+                                    ? "Add Product"
+                                    : "Update Product",
+                                onPressed: _saveProduct,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -320,4 +371,19 @@ class _AddProductState extends State<AddProduct> {
       ),
     );
   }
+
+  final inputDecoration = InputDecoration(
+    labelText: '',
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      borderSide: BorderSide(color: Colors.grey),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      borderSide: BorderSide(color: Colors.blue),
+    ),
+  );
 }

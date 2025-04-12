@@ -6,7 +6,17 @@ class AppButton {
       padding: const EdgeInsets.all(10.0),
       child: ElevatedButton(
         onPressed: onPressed,
-        child: Text(text),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          elevation: 4,
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 16),
+        ),
       ),
     );
   }

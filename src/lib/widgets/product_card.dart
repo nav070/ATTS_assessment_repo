@@ -84,7 +84,7 @@ class _ProductCardState extends State<ProductCard> {
 
   void _deleteProduct(int index) {
     setState(() {
-      widget.data.removeAt(index); // Optional: only if allowed
+      Provider.of<ProductProvider>(context, listen: false).deleteProduct(index);
     });
     debugPrint("Deleted product at index $index");
   }
